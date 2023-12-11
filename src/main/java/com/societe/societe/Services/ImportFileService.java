@@ -25,6 +25,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.swing.text.html.HTMLDocument.Iterator;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import  com.fasterxml.jackson.databind.ObjectMapper;
@@ -204,21 +206,40 @@ private final ObjectMapper objMp;
     
     }
 
-    @Override
-    public void deleteAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAll'");
+   
+    
+
+    public Iterable<Client> getClients(){
+        return clients_repos.findAll();
     }
 
-    @Override
-    public Stream<Path> loadAll() {
-        
-        try {
-            return Files.walk(this.root,1).filter(path-> !path.equals(this.root)).map(this.root::relativize);
-        } catch (IOException e) {
-            throw new RuntimeException("Une erreur s est produite lors de la lecture");
+    public String getMoyenne(){
+        String stat="";
+    Iterable<Client>les_clients=clients_repos.findAll();
+    
+    List<String>liste_prof=new ArrayList<>();
+    for (Client client : les_clients) {
+        if(!liste_prof.contains(client.getProfession())){
+             liste_prof.add(client.getProfession());
         }
+       
 
+    }
+ 
+     for (String profession : liste_prof) {
+        float som_salaire=0;
+        int nbre=0;
+        for (Client client : les_clients){
+            if(client.getProfession().equals(profession)){
+                som_salaire+=client.getSalaire();
+                nbre++;
+            }
+         }
+         Float moyenne=som_salaire/nbre;
+        stat+=profession+"--->"+moyenne+"\n";
+    }
+    // System.out.println(stat);
+     return stat;
     }
     
 }

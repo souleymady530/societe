@@ -24,8 +24,7 @@ import com.societe.societe.Repositories.ClientRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-;;
-@CrossOrigin(origins = "http://localhost:4200/")
+
 @RestController
 public class ImportFileController {
     @Autowired
@@ -37,7 +36,7 @@ public class ImportFileController {
    public ResponseEntity<?> uploadFile(@RequestParam MultipartFile file){
 
     fileSerivce.save(file);
-    return ResponseEntity.ok("Fichier enregister avec succes "+file.getOriginalFilename());
+    return ResponseEntity.ok("Fichier enregister avec succes ");
    }
 
    @GetMapping("/clients")
@@ -45,56 +44,13 @@ public class ImportFileController {
     return client_repos.findAll();
    }
    
-   @GetMapping("files")
-   public ResponseEntity<List<ImportFile>> getAllFile(){
-
-    List<ImportFile> files=fileSerivce.loadAll().map(
-        path->{
-        String filename=path.getFileName().toString();
-        String url=MvcUriComponentsBuilder.fromMethodName(ImportFileController.class,"getFile",path.getFileName().toString()).build().toString();
-        return new ImportFile(filename,url);
-    }
-    ).collect(Collectors.toList());
-return ResponseEntity.ok(files);     
-   }
-
-   @GetMapping("files/{filename:.+}")
-   public ResponseEntity<?> getFile(@PathVariable String filename){
-    Resource file=fileSerivce.load(filename);
-    return ResponseEntity.ok()
-    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\""+file.getFilename()+"").body(file);
-
-   }
+    
 
    @GetMapping("/statistique")
    public String GetStatistique() {
-    String stat="";
-    Iterable<Client>les_clients=this.client_repos.findAll();
-    int i=0;
-    List<String>liste_prof=new ArrayList<>();
-    for (Client client : les_clients) {
-        if(!liste_prof.contains(client.getProfession())){
-             liste_prof.add(client.getProfession());
-        }
-       
-
-    }
-
-     for (String profession : liste_prof) {
-        float som_salaire=0;
-        int nbre=0;
-        for (Client client : les_clients){
-            if(client.getProfession().equals(profession)){
-                som_salaire+=client.getSalaire();
-                nbre++;
-            }
-         }
-         Float moyenne=som_salaire/nbre;
-        stat+=profession+"--->"+moyenne+"\n";
-    }
-     System.out.println(stat);
     
-    return stat;
+   return fileSerivce.getMoyenne();
+     
        
    }
    
