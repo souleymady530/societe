@@ -219,7 +219,7 @@ private final ObjectMapper objMp;
     
     List<String>liste_prof=new ArrayList<>();
     for (Client client : les_clients) {
-        if(!liste_prof.contains(client.getProfession())){
+        if(!liste_prof.contains(client.getProfession().trim())){
              liste_prof.add(client.getProfession());
         }
        
@@ -238,7 +238,7 @@ private final ObjectMapper objMp;
          Float moyenne=som_salaire/nbre;
         stat+=profession+"--->"+moyenne+"\n";
     }
-    // System.out.println(stat);
+    System.out.println(stat);
      return stat;
     }
     
